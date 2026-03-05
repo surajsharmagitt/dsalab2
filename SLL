@@ -1,0 +1,82 @@
+// single linked list
+#include <stdio.h>
+#include <stdlib.h>
+struct node{ int data; struct node *next; };
+struct node *head=NULL;
+int read_int(){
+    int x;
+    while(scanf("%d",&x)!=1){
+        printf("Invalid input! Enter integer: ");
+        while(getchar()!='\n');
+    }
+    return x;
+}
+void insert_begin(){
+    struct node *n=malloc(sizeof(struct node));
+    printf("Data: "); n->data=read_int();
+    n->next=head; head=n;
+}
+void insert_end(){
+    struct node *n=malloc(sizeof(struct node)), *t=head;
+    printf("Data: "); n->data=read_int(); n->next=NULL;
+    if(!head){ head=n; return; }
+    while(t->next) t=t->next;
+    t->next=n;
+}
+void insert_pos(){
+    int pos,i; printf("Position: "); pos=read_int();
+    if(pos==1){ insert_begin(); return; }
+    struct node *n=malloc(sizeof(struct node)), *t=head;
+    printf("Data: "); n->data=read_int();
+    for(i=1;i<pos-1 && t;i++) t=t->next;
+    if(!t){ printf("Invalid position\n"); free(n); return; }
+    n->next=t->next; t->next=n;
+}
+void delete_begin(){
+    if(!head){ printf("Empty list\n"); return; }
+    struct node *t=head; head=head->next; free(t);
+}
+void delete_end(){
+    if(!head){ printf("Empty list\n"); return; }
+    if(!head->next){ free(head); head=NULL; return; }
+    struct node *t=head;
+    while(t->next->next) t=t->next;
+    free(t->next); t->next=NULL;
+}
+void delete_pos(){
+    int pos,i; printf("Position: "); pos=read_int();
+    if(pos==1){ delete_begin(); return; }
+    struct node *t=head;
+    for(i=1;i<pos-1 && t->next;i++) t=t->next;
+    if(!t->next){ printf("Invalid position\n"); return; }
+    struct node *d=t->next; t->next=d->next; free(d);
+}
+void search(){
+    int x=read_int(),pos=1; struct node *t=head;
+    while(t){ if(t->data==x){ printf("Found at %d\n",pos); return; } t=t->next; pos++; }
+    printf("Not found\n");
+}
+void display(){
+    struct node *t=head;
+    while(t){ printf("%d -> ",t->data); t=t->next; }
+    printf("NULL\n");
+}
+int main(){
+    int ch;
+    while(1){
+        printf("\n1.InsBeg 2.InsEnd 3.InsPos 4.DelBeg 5.DelEnd 6.DelPos 7.Search 8.Display 9.Exit\nChoice: ");
+        if(scanf("%d",&ch)!=1){ while(getchar()!='\n'); printf("Invalid!\n"); continue; }
+        switch(ch){
+            case 1: insert_begin(); break;
+            case 2: insert_end(); break;
+            case 3: insert_pos(); break;
+            case 4: delete_begin(); break;
+            case 5: delete_end(); break;
+            case 6: delete_pos(); break;
+            case 7: printf("Search value: "); search(); break;
+            case 8: display(); break;
+            case 9: return 0;
+            default: printf("Enter 1-9 only\n");
+        }
+    }
+}
