@@ -1,0 +1,111 @@
+// double
+#include <stdio.h>
+#include <stdlib.h>
+struct node{
+    int data;
+    struct node *prev,*next;
+};
+struct node *head=NULL;
+int read_int(){
+    int x;
+    while(scanf("%d",&x)!=1){
+        printf("Invalid input! Enter integer: ");
+        while(getchar()!='\n');
+    }
+    return x;
+}
+struct node* create(int val){
+    struct node *n=malloc(sizeof(struct node));
+    n->data=val; n->prev=n->next=NULL;
+    return n;
+}
+void insert_begin(){
+    printf("Value: "); int v=read_int();
+    struct node *n=create(v);
+    if(head) head->prev=n, n->next=head;
+    head=n;
+}
+void insert_end(){
+    printf("Value: "); int v=read_int();
+    struct node *n=create(v),*t=head;
+    if(!head){ head=n; return; }
+    while(t->next) t=t->next;
+    t->next=n; n->prev=t;
+}
+void insert_pos(){
+    int pos,i; printf("Position: "); pos=read_int();
+    printf("Value: "); int v=read_int();
+    if(pos==1){ insert_begin(); return; }
+    struct node *t=head,*n=create(v);
+    for(i=1;i<pos-1 && t;i++) t=t->next;
+    if(!t){ printf("Invalid position\n"); free(n); return; }
+    n->next=t->next; n->prev=t;
+    if(t->next) t->next->prev=n;
+    t->next=n;
+}
+void delete_begin(){
+    if(!head){ printf("Empty list\n"); return; }
+    struct node *t=head;
+    head=head->next;
+    if(head) head->prev=NULL;
+    free(t);
+}
+void delete_end(){
+    if(!head){ printf("Empty list\n"); return; }
+    struct node *t=head;
+    if(!t->next){ free(head); head=NULL; return; }
+    while(t->next) t=t->next;
+    t->prev->next=NULL;
+    free(t);
+}
+void delete_pos(){
+    int pos,i; printf("Position: "); pos=read_int();
+    if(pos==1){ delete_begin(); return; }
+    struct node *t=head;
+    for(i=1;i<pos && t;i++) t=t->next;
+    if(!t){ printf("Invalid position\n"); return; }
+    if(t->next) t->next->prev=t->prev;
+    t->prev->next=t->next;
+    free(t);
+}
+void search(){
+    printf("Search value: "); int v=read_int(),pos=1;
+    struct node *t=head;
+    while(t){
+        if(t->data==v){ printf("Found at %d\n",pos); return; }
+        t=t->next; pos++;
+    }
+    printf("Not found\n");
+}
+void display_f(){
+    struct node *t=head;
+    while(t){ printf("%d <-> ",t->data); t=t->next; }
+    printf("NULL\n");
+}
+void display_b(){
+    struct node *t=head;
+    if(!t){ printf("Empty list\n"); return; }
+    while(t->next) t=t->next;
+    while(t){ printf("%d <-> ",t->data); t=t->prev; }
+    printf("NULL\n");
+}
+int main(){
+    int ch;
+    while(1){
+        printf("\n1.InsBeg 2.InsEnd 3.InsPos 4.DelBeg 5.DelEnd 6.DelPos 7.Search 8.Fwd 9.Back 10.Exit\nChoice: ");
+        if(scanf("%d",&ch)!=1){ while(getchar()!='\n'); printf("Invalid!\n"); continue; }
+        switch(ch){
+            case 1: insert_begin(); break;
+            case 2: insert_end(); break;
+            case 3: insert_pos(); break;
+            case 4: delete_begin(); break;
+            case 5: delete_end(); break;
+            case 6: delete_pos(); break;
+            case 7: search(); break;
+            case 8: display_f(); break;
+            case 9: display_b(); break;
+            case 10: return 0;
+            default: printf("Enter 1-10 only\n");
+        }
+    }
+}
